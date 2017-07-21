@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{55FA32BD-31F0-4B70-B720-4347D3CCC8B1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TRASY</RootNamespace>
+    <AssemblyName>TRASY</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GMap.NET.Core, Version=1.7.5.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
+      <HintPath>..\packages\GMap.NET.Windows.1.7.5\lib\net40\GMap.NET.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GMap.NET.WindowsForms, Version=1.7.5.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
+      <HintPath>..\packages\GMap.NET.Windows.1.7.5\lib\net40\GMap.NET.WindowsForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GMap.NET.WindowsPresentation, Version=1.7.5.0, Culture=neutral, PublicKeyToken=b85b9027b614afef, processorArchitecture=MSIL">
+      <HintPath>..\packages\GMap.NET.Windows.1.7.5\lib\net40\GMap.NET.WindowsPresentation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MaterialSkin">
+      <HintPath>..\packages\MaterialSkin.0.2.1\lib\MaterialSkin.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.9.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tulpep.NotificationWindow, Version=1.0.18.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tulpep.NotificationWindow.1.0.18\lib\net40\Tulpep.NotificationWindow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CLASSES\DataAccess.cs" />
+    <Compile Include="CLASSES\msgbox.cs" />
+    <Compile Include="CLASSES\users_info.cs" />
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\DataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Report\listofOnlinebusreport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\listofOnlinebusreport.Designer.cs">
+      <DependentUpon>listofOnlinebusreport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\AlertMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\AlertMessage.Designer.cs">
+      <DependentUpon>AlertMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\buses.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\buses.Designer.cs">
+      <DependentUpon>buses.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\confirmapassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\confirmapassword.designer.cs">
+      <DependentUpon>confirmapassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\emergency.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\emergency.designer.cs">
+      <DependentUpon>emergency.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\Employee.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\Employee.designer.cs">
+      <DependentUpon>Employee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\location.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\location.designer.cs">
+      <DependentUpon>location.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\login.designer.cs">
+      <DependentUpon>login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\Messageform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\Messageform.designer.cs">
+      <DependentUpon>Messageform.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\Messages.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\Messages.designer.cs">
+      <DependentUpon>Messages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\PoliceHotline.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\PoliceHotline.designer.cs">
+      <DependentUpon>PoliceHotline.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Referentials\Users.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Referentials\Users.designer.cs">
+      <DependentUpon>Users.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\CreateMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\CreateMessage.Designer.cs">
+      <DependentUpon>CreateMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\EmergencyMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\EmergencyMessage.Designer.cs">
+      <DependentUpon>EmergencyMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\ListofOfflineBus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\ListofOfflineBus.Designer.cs">
+      <DependentUpon>ListofOfflineBus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\ListofOnlineBus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\ListofOnlineBus.Designer.cs">
+      <DependentUpon>ListofOnlineBus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="_System\PersonalMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_System\PersonalMessage.Designer.cs">
+      <DependentUpon>PersonalMessage.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Report\listofOnlinebusreport.resx">
+      <DependentUpon>listofOnlinebusreport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\Report1.rdlc" />
+    <EmbeddedResource Include="_System\AlertMessage.resx">
+      <DependentUpon>AlertMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\buses.resx">
+      <DependentUpon>buses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\confirmapassword.resx">
+      <DependentUpon>confirmapassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\emergency.resx">
+      <DependentUpon>emergency.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\Employee.resx">
+      <DependentUpon>Employee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\location.resx">
+      <DependentUpon>location.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\login.resx">
+      <DependentUpon>login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\Messageform.resx">
+      <DependentUpon>Messageform.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\Messages.resx">
+      <DependentUpon>Messages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\PoliceHotline.resx">
+      <DependentUpon>PoliceHotline.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Referentials\Users.resx">
+      <DependentUpon>Users.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="_System\CreateMessage.resx">
+      <DependentUpon>CreateMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="_System\EmergencyMessage.resx">
+      <DependentUpon>EmergencyMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="_System\ListofOfflineBus.resx">
+      <DependentUpon>ListofOfflineBus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="_System\ListofOnlineBus.resx">
+      <DependentUpon>ListofOnlineBus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="_System\PersonalMessage.resx">
+      <DependentUpon>PersonalMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Report\DataSet1.xsc">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="Report\DataSet1.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Report\DataSet1.xss">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="Resources\ambulance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\buses.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\businessman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\employees.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\envelope.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\map %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\phone-number.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Store_Door_Chime-Mike_Koenig-570742973.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\offlinebus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\onlinebus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\locked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\office-material.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\orbit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\planet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech-bubble %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech-bubble %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech-bubble %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\speech-bubble.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\email.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ic_launcher-web.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\success.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\key.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\username.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\notif.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ambulance32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bus32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ambulance64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bus64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Emergency-Flashers.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Fire_pager.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trasymianicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trasymianicon.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

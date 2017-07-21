@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataSet1" targetNamespace="http://tempuri.org/DataSet1.xsd" xmlns:mstns="http://tempuri.org/DataSet1.xsd" xmlns="http://tempuri.org/DataSet1.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DataSet1" msprop:Generator_UserDSName="DataSet1">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="bus" msprop:Generator_TableClassName="busDataTable" msprop:Generator_TableVarName="tablebus" msprop:Generator_RowChangedName="busRowChanged" msprop:Generator_TablePropName="bus" msprop:Generator_RowDeletingName="busRowDeleting" msprop:Generator_RowChangingName="busRowChanging" msprop:Generator_RowEvHandlerName="busRowChangeEventHandler" msprop:Generator_RowDeletedName="busRowDeleted" msprop:Generator_RowClassName="busRow" msprop:Generator_UserTableName="bus" msprop:Generator_RowEvArgName="busRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="bus_name" msprop:Generator_ColumnVarNameInTable="columnbus_name" msprop:Generator_ColumnPropNameInRow="bus_name" msprop:Generator_ColumnPropNameInTable="bus_nameColumn" msprop:Generator_UserColumnName="bus_name" type="xs:string" minOccurs="0" />
+              <xs:element name="bus_plate_no" msprop:Generator_ColumnVarNameInTable="columnbus_plate_no" msprop:Generator_ColumnPropNameInRow="bus_plate_no" msprop:Generator_ColumnPropNameInTable="bus_plate_noColumn" msprop:Generator_UserColumnName="bus_plate_no" type="xs:string" minOccurs="0" />
+              <xs:element name="drivername" msprop:Generator_ColumnVarNameInTable="columndrivername" msprop:Generator_ColumnPropNameInRow="drivername" msprop:Generator_ColumnPropNameInTable="drivernameColumn" msprop:Generator_UserColumnName="drivername" type="xs:string" minOccurs="0" />
+              <xs:element name="conductorname" msprop:Generator_ColumnVarNameInTable="columnconductorname" msprop:Generator_ColumnPropNameInRow="conductorname" msprop:Generator_ColumnPropNameInTable="conductornameColumn" msprop:Generator_UserColumnName="conductorname" type="xs:string" minOccurs="0" />
+              <xs:element name="passesngercount" msprop:Generator_ColumnVarNameInTable="columnpassesngercount" msprop:Generator_ColumnPropNameInRow="passesngercount" msprop:Generator_ColumnPropNameInTable="passesngercountColumn" msprop:Generator_UserColumnName="passesngercount" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

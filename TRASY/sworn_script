@@ -1,0 +1,734 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MetroFramework;
+using MetroFramework.Controls;
+using MetroFramework.Forms;
+using MISApplications.BusinessLayer.Structures.BPLS;
+using MISApplications.BusinessLayer.Rules.BPLS;
+using MISApplications.BPLS;
+using System.IO;
+using MISApplications.BusinessLayer.Rules.SYBASE;
+using System.Diagnostics;
+using MISApplications.Referential.BPLS;
+using System.Net;
+using System.Net.Sockets;
+
+namespace MISApplications.BPLS
+{
+    public partial class frm_swornstatement : MetroForm
+    {
+        string _action = "";
+        private string _business_information = "";
+        private int transaction_type = 0;
+        private int sworn_id = 0;
+        int current_count = 0;
+        private DateTime _start_time;
+        private bool _is_completed=false;
+        private int _SWORN_CODE = 0;
+
+        public frm_swornstatement()
+        {
+            InitializeComponent();
+        }
+        private void frm_swornstatement_Load(object sender, EventArgs e)
+        {
+            ctr_ss.Enabled = false;
+            btn__business_tracking.Visible = true;
+            this.ctr_ss.cbo();
+            this.referentialButton1.save_click += new EventHandler(save_click);
+            this.referentialButton1.delete_click += new EventHandler(delete_click);
+            this.referentialButton1.add_click += new EventHandler(add_click);
+            this.referentialButton1.edit_click += new EventHandler(edit_click);
+            this.referentialButton1.cancel_click += new EventHandler(cancel_click);
+            this.referentialButton1.close_click += new EventHandler(close_click);
+            this.referentialButton1.EnableSave = true;
+            this.sworn_list.ItemClick += new EventHandler(this._list_click);
+            load_list(false);
+            this.ctr_ss.txt_businessyear.Text = DateTime.Now.Year.ToString();
+            ctr_ss.txt_review.Text = Program.current_user.firstname + " " + Program.current_user.lastname;
+            ctr_ss.txt_reviewedposition.Text = Program.current_user.position;     
+        }
+        private void load_list(bool view_assessent)
+        {
+            string param="";
+            if ( view_assessent ) {
+                param = " and business_name like'%assessment%' and tag=2"; 
+            }
+            this.sworn_list.Reset();
+            this.sworn_list.UseSwornIdSortFIFO = true;
+            this.sworn_list.SQLStatement = "select x.* from (select * from stamariabpls.[dbo].[select_sworn] where business_name is not null "+param+") x";
+            this.sworn_list.DisplayMember = "business_name";
+            this.sworn_list.ValueMember = "id";
+            this.sworn_list.DataBind();
+            current_count = sworn_list.Count;
+        }
+        private void _list_click(object sender, EventArgs e)
+        {
+            ctr_ss.Enabled = false;
+            ctr_ss.txt_capitalization.Enabled = true;
+            ctr_ss.dt_transac.Checked = false;       
+            referentialButton1.EnableEdit = true;
+            ctr_ss.rdn_new.Enabled = false;
+            ctr_ss.rdn_new.Checked = false;
+            ctr_ss.rdn_renewal.Enabled = true;
+            ctr_ss.rdn_closure.Enabled = true;
+            ctr_ss.ClearText();
+            ctr_ss.txt_capitalization.Text = "0.00";
+            ctr_ss.txt_ctcno.Text = "0";             
+            ctr_ss.txt_noofemployees.Text = "0";                        
+            sp_select_sworn_statement sps2 = new sp_select_sworn_statement();
+            ctr_ss.ClearData();
+            ctr_ss.Data.business_information_id = int.Parse(sworn_list.SelectedValue.ToString());
+            if (sps2.Fill(ctr_ss.Data))
+            {
+                sworn_id = 0;
+                ctr_ss.Data = sps2.List[0];
+                ctr_ss.DisplaySwornData();
+                
+                sworn_id = ctr_ss.Data.id;
+                cbo_boss.Text = ctr_ss.Data.boss;
+                cbo_boss.Enabled = true;
+               ctr_ss.txt_businessyear.Text=(ctr_ss.dt_transac.Value.Year.ToString());
+              if ( ctr_ss.Data.boss.Equals ("") ) { cbo_boss.SelectedIndex = 0; }
+            }
+            else
+            {
+                ctr_ss.txt_review.Text = Program.current_user.firstname + " " + Program.current_user.lastname;
+                ctr_ss.txt_reviewedposition.Text = Program.current_user.position;
+                cbo_boss.Text = "";
+                cbo_boss.Enabled = false;
+            }
+            sp_select_Business_information sps = new sp_select_Business_information();         
+            ctr_ss.Business_data.id = int.Parse(sworn_list.SelectedValue.ToString());
+            if (sps.Fill(ctr_ss.Business_data))
+            {
+                ctr_ss.Business_data = sps.List[0];
+                ctr_ss.DisplayBusinessData();
+                _business_information = ctr_ss.Business_data.id.ToString();
+            }
+            else
+            {
+                string year = DateTime.Now.Year.ToString().Replace("20", "");
+                string month = DateTime.Now.Month.ToString();
+                if (month.Length == 1)
+                {
+                    month = "0" + DateTime.Now.Month.ToString();
+                }
+                //     ctr_ss.txt_controlno.Text = year + "-" + month + "-" + this.sworn_list.SelectedValue.ToString();
+                ctr_ss.txt_businessyear.Text = DateTime.Now.Year.ToString();
+            }
+            //  if (_new()) 
+            //   {
+            //      ctr_ss.cbo_transactiontype.SelectedValue = 35;
+            //  }
+            referentialButton1.Visible = true;
+            btn_proceed.Visible = true;
+            if (done() == 1)
+            {
+                referentialButton1.Visible = true;
+                btn_proceed.Visible = true;
+            }
+            else if (done() == 0)
+            {
+                referentialButton1.Visible = true;
+                btn_proceed.Visible = false;
+            }
+            else
+            {
+                referentialButton1.Visible = false;
+                btn_proceed.Visible = false;
+            }
+            if (NEW(ctr_ss.Business_data.id.ToString()))
+            {
+                ctr_ss.rdn_new.Enabled = true;
+                ctr_ss.rdn_new.Checked = true;
+                ctr_ss.rdn_renewal.Enabled = false;
+                ctr_ss.rdn_closure.Enabled = false;
+            }            
+            select_requirements();
+            Status.business_id = int.Parse(sworn_list.SelectedValue.ToString());
+            ctr_ss.lbl_status.Text = Status.Name;
+            ctr_ss.txt_businessyear.Text = ctr_ss.dt_transac.Value.Year.ToString();
+        if(ctr_ss.rdn_new.Checked)
+        {
+            if (ctr_ss.txt_ctcno.Text.ToLower().Equals("0") || ctr_ss.txt_ctcno.Text.ToLower().Equals(string.Empty)||btn_proceed.Visible) 
+            {
+                ctr_ss.txt_ctcno.Text = "None";
+            }
+            
+        }
+        if ( HASBEENASSESSED )
+        {
+            msgbox.Warning2 (this,ctr_ss.txt_changebusinessname.Text +" is currently in the process of Assessment.","Warning");
+            return;
+        }
+        }
+        #region Button
+        private void save_click(object sender, EventArgs e)
+        {
+           
+            if (ctr_ss.Validate())
+            {
+                msgbox.Warning2(this, ctr_ss.Error, "Saving failed. Please complete the following:");
+                referentialButton1.BacktoNormal(true);
+                return;
+            }
+            if (ctr_ss.txt_businessyear.Text.Equals(""))
+            {
+                ctr_ss.txt_businessyear.Text = "0";
+            }
+            if (ctr_ss.validate_transaction_type)
+            {
+                msgbox.Warning2(this, "Please select Transaction Type", "Message");
+                this.referentialButton1.BacktoNormal(true);
+                return;
+            }
+            if (msgbox.Confirm(this, "Do you want to save changes? ", "Update Confirmation"))
+            {                 
+                sp_insert_sworn_statement sp_insert = new sp_insert_sworn_statement();
+                ctr_ss.setData();
+                ctr_ss.Data.boss = cbo_boss.Text;                
+                ctr_ss.Data.business_information_id = int.Parse(sworn_list.SelectedValue.ToString());
+                switch(ctr_ss.cbo_mode_of_payment.Text){
+                        case "Annually":
+                        ctr_ss.Data.mode_of_payment = 1;
+                        break;
+                        case "Semi annual":
+                        ctr_ss.Data.mode_of_payment=2;
+                        break;
+                        case "Quarterly":
+                        ctr_ss.Data.mode_of_payment = 3;
+                        break;
+                    default:
+                        ctr_ss.Data.mode_of_payment = 0;
+                        break;
+                }              
+                if (sp_insert.Execute(ctr_ss.Data))
+                {
+                    update_sworn_code(_SWORN_CODE, sp_insert.id);
+                   // ctr_ss.Update_business(sworn_list.SelectedValue.ToString());                   
+                        TurnAroundTime turn = new TurnAroundTime();
+                        turn.business_id = int.Parse(sworn_list.SelectedValue.ToString());
+                        turn.status_id = 2;
+                        turn.business_year =int.Parse(DateTime.Now.Year.ToString());
+                        turn.start_time = _start_time;
+                        turn.sworn_id = sp_insert.id;
+                        if (turn.ExecuteStartTIME)
+                        {
+                            turn.end_time = DateTime.Now;
+                            if (turn.ExecuteEndTIME)
+                            {                                                      
+                            Tag tag = new Tag();
+                                tag.BusinessInformationId = int.Parse(sworn_list.SelectedValue.ToString());
+                                tag.value = 1;
+                                if (tag.Execute)
+                                {
+                                }
+                                this.sworn_list.DataBind();
+                                btn_proceed.Visible = true;                              
+                                msgbox.Show(this, "Successfully saved!", "Message");
+                                cbo_boss.Enabled = true;
+                                sworn_list.DataBind();
+                                sworn_id = 0;
+                            }
+                        }                   
+                }
+            }
+            sworn_list.DataBind();
+            ctr_ss.txt_noofemployees.Enabled = false;           
+        }
+        private void delete_click(object sender, EventArgs e)
+        {
+            if (msgbox.Confirm(this, "Are you sure you want to delete " + ctr_ss.txt_changebusinessname.Text.ToUpper() + "?", "Delete Confirmation"))
+            {
+                sp_delete_sworn_statement sp_delete = new sp_delete_sworn_statement();
+                ctr_ss.Data.business_information_id = int.Parse(sworn_list.SelectedValue.ToString());
+                if (sp_delete.Execute(ctr_ss.Data))
+                {
+                    msgbox.Show(this, "Successfully deleted!", "Message");
+                    this.sworn_list.DataBind();
+                    ctr_ss.ClearText();
+                }
+            }
+        }
+        private void add_click(object sender, EventArgs e)
+        {
+            this._action = "Add";
+            ctr_ss.txt_capitalization.Enabled = true;
+        }
+        private void edit_click(object sender, EventArgs e)
+        {
+
+            if ( HASBEENASSESSED )
+            {
+                msgbox.Warning2 (this , ctr_ss.txt_changebusinessname.Text + " is already Assessed for this year." , "Warning");
+                return;
+            }
+            if ( COUNTER.ISONPROCESS (sworn_list.SelectedValue.ToString () , "R") )
+            {
+
+            }
+            if ( COUNTER.HASPENDING ("R") )
+            {
+                msgbox.Warning2 (this,"You have a document  need to process first.","WARNING");
+                return;
+            }
+            else
+            {
+                ctr_ss.txt_noofemployees.Enabled = true;
+                COUNTER.NEWPROCESS (sworn_list.SelectedValue.ToString () , "R");
+                ctr_ss.txt_ctcno.Text = "None";
+                ctr_ss.Enabled = true;
+                this._action = "Add";
+                ctr_ss.txt_capitalization.Enabled = true;
+                this._start_time = DateTime.Now;
+                cbo_boss.Enabled = false;
+                cbo_boss.Text = "";
+                _SWORN_CODE = ValidateSybase.SWORNCODE;
+            }                    
+        }
+        private void cancel_click(object sender, EventArgs e)
+        {
+            _SWORN_CODE = 0;
+            this.ctr_ss.ClearText();
+            this.ctr_ss.Enabled = false;
+            cbo_boss.Text = "";
+            COUNTER.ENDPROCESSBUSINESS (sworn_list.SelectedValue.ToString(),"R");
+        }
+        private void close_click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        #endregion
+        private bool _new()
+        {
+            DataTable dt = null;
+            Program.da.createCommand("SELECT business_information_id FROM stamariabpls.dbo.business_sworn_statements  where business_information_id=" + sworn_list.SelectedValue + "");
+            if (Program.da.fillCommand())
+            {
+                dt = Program.da.getTable();
+                DataRow dr = dt.Rows[0];
+                return dr["business_information_id"].ToString() == sworn_list.SelectedValue;
+            }
+            return false;
+        }
+        private void btn_proceed_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btn_proceed.Visible = false;
+                btn_proceed.Visible = false;
+                referentialButton1.Visible = false;
+                sworn_list.DataBind();
+                cbo_boss.Text = "";
+                TurnAroundTime turn = new TurnAroundTime();
+                turn.business_id = int.Parse(sworn_list.SelectedValue.ToString());
+                turn.status_id = 3;
+                turn.business_year = int.Parse(DateTime.Now.Year.ToString());
+                turn.end_time = DateTime.Now;
+                turn.sworn_id = sworn_id;
+                if (turn.ExecuteEndTIME)
+                {
+                    Tag tag = new Tag();
+                    tag.BusinessInformationId = int.Parse(sworn_list.SelectedValue.ToString());
+                    tag.value = 2;
+                    if (tag.Execute)
+                    {
+                    }
+                    if (cbo_boss.Text == "")
+                    {
+                        this.mgrid.DataSource = null;
+                    }
+                    msgbox.Show(this, ctr_ss.txt_changebusinessname.Text + " successfully forwarded to assessment", "Messsage");
+                    COUNTER.ENDPROCESSBUSINESS (sworn_list.SelectedValue.ToString (),"R");
+                }
+
+                sworn_list.DataBind();
+            }
+            catch (Exception xx) { }
+        }
+        private int done()
+        {
+            int business_information_id = int.Parse(sworn_list.SelectedValue.ToString());
+            string SQL=@"select tag  from stamariabpls.dbo.business_sworn_statements
+ where business_information_id=" + business_information_id + @" and id=(select max(id)  from stamariabpls.dbo.business_sworn_statements where business_information_id=" + business_information_id +")";
+            DataTable dt = null;
+            Program.da.createCommand(SQL);
+            if (Program.da.fillCommand())
+            {
+                dt = Program.da.getTable();
+                DataRow dr = dt.Rows[0];
+                string value = dr["tag"].ToString();
+                return int.Parse(dr["tag"].ToString());
+            }
+            return 0;
+        }
+
+        private void insert_requirements()
+        {
+          /*  sworn_id =( GetID.getLatestID("business_sworn_statements", int.Parse(this.sworn_list.SelectedValue.ToString()))-1);
+
+            foreach (DataGridViewRow gdr in this.mgrid.Rows)
+            {
+                try
+                {
+                    if (gdr.Cells["is_checked"].Value.ToString().Equals("1"))
+                    {
+                        sworn_requirements docs = new sworn_requirements();
+                        sp_insert_sworn_requirements sp_insert = new sp_insert_sworn_requirements();
+                        docs.sworn_id = sworn_id;
+                        docs.is_checked = 1;
+                        docs.is_preview = 1;
+                        docs.requirement_id = int.Parse(gdr.Cells["id"].Value.ToString());
+                        docs.description = gdr.Cells["description"].Value.ToString();
+                        if (ctr_ss.rdn_new.Checked)
+                        {
+                            docs.transaction_type = 1;
+                        }
+                        else if (ctr_ss.rdn_renewal.Checked)
+                        {
+                            docs.transaction_type = 2;
+                        }
+                        else if (ctr_ss.rdn_closure.Checked)
+                        {
+                            docs.transaction_type = 3;
+                        }
+
+                        if (sp_insert.Execute(docs))
+                        {
+
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            }
+                   */    
+        }
+        private void select_requirements()
+        {
+            string sql1 = @"select rfr.boss from stamariabpls.dbo.sworn_requirements  sr
+                            left join stamariabpls.dbo.ref_requirements rfr on sr.requirement_id = rfr.id
+                            where business_year = " + DateTime.Now.Year + " and business_id = " + sworn_list.SelectedValue.ToString() + " ";
+            Program.da.createCommand(sql1);
+            if (Program.da.fillCommand())
+            {
+                DataTable dt = Program.da.getTable();
+                DataRow dr = dt.Rows[0];
+                cbo_boss.Text = dr["boss"].ToString();
+
+            }
+            else
+            {
+                cbo_boss.Text = "";
+            }
+
+
+            if (ctr_ss.rdn_new.Checked == true)
+            {
+                transaction_type = 1;
+            }
+            else if (ctr_ss.rdn_renewal.Checked == true)
+            {
+                transaction_type = 2;
+            }
+            else if (ctr_ss.rdn_closure.Checked == true)
+            {
+                transaction_type = 3;
+
+            }
+          
+            if (cbo_boss.Text != "")
+            {
+
+                DataTable dt = new DataTable();
+                string sql = @"select max(sr.id) as id, sr.business_year ,sr.description,rfr.boss ,'View' as is_preview,1 as is_click from stamariabpls.dbo.sworn_requirements sr
+                               left join stamariabpls.dbo.ref_requirements rfr on  sr.requirement_id=rfr.id 
+                               where business_year = " + DateTime.Now.Year+" and business_id = " + sworn_list.SelectedValue.ToString()+ " group by  sr.business_year ,sr.description,rfr.boss,sr.date ,sr.ex_date  ";
+                Program.da.createCommand(sql);
+                if (Program.da.fillCommand())
+                {
+                    dt = Program.da.getTable();
+                    if (dt.Rows.Count > 0)
+                    {
+                        this.mgrid.AutoGenerateColumns = false;
+                        this.mgrid.DataSource = dt;
+                    }
+                }               
+            }
+            else
+            {
+                this.mgrid.DataSource = null;
+            }            
+        }
+        private bool NEW(string id)
+        {
+            DataTable dt = new DataTable();
+            Program.da.createCommand("select count(business_id) as count   from stamariabpls.dbo.business_mayors_permits where business_id=" + id + "");
+            if (Program.da.fillCommand())
+            {
+                dt = Program.da.getTable();
+                DataRow dr = dt.Rows[0];
+                return int.Parse(dr["count"].ToString()) == 0;
+            }
+            return false;
+        }
+
+        private void btn__business_tracking_Click(object sender, EventArgs e)
+        {
+            Referential.BPLS.BusinessTracking form = new Referential.BPLS.BusinessTracking(_business_information, ctr_ss.txt_existingbusinessname.Text);
+            form.Show();
+        }
+
+        private void cbo_boss_DropDownClosed(object sender, EventArgs e)
+        {
+            if (ctr_ss.rdn_new.Checked == true)
+            {
+                transaction_type = 1;
+            }
+            else if (ctr_ss.rdn_renewal.Checked == true)
+            {
+                transaction_type = 2;
+            }
+            else if (ctr_ss.rdn_closure.Checked == true)
+            {
+                transaction_type = 3;
+
+            }
+
+            if (cbo_boss.Text != "")
+            {
+                DataTable dt = new DataTable();
+                string sql = @"select docs.id,  docs.description," + null + @" as sworn_id, case when bdoc.is_preview = 1 then 'Preview' else 'Upload' end as is_preview,case when bdoc.is_preview = 1 then 1 else 0 end as is_checked, bdoc.image as rawfile, bdoc.id as bid from [stamariabpls].[dbo].[ref_requirements] docs left join (select distinct requirement_id, sworn_id, is_preview, image, id  from [stamariabpls].[dbo].[sworn_requirements]where sworn_id =" + null + " and transaction_type = " + transaction_type + @") bdoc on docs.id = bdoc.requirement_id where docs.boss = '" + cbo_boss.Text + "'";
+
+
+                Program.da.createCommand(sql);
+                if (Program.da.fillCommand())
+                {
+                    dt = Program.da.getTable();
+
+                    if (dt.Rows.Count > 0)
+                    {
+
+                        this.mgrid.AutoGenerateColumns = false;
+                        this.mgrid.DataSource = dt;
+
+                    }
+                }
+            }
+            else
+            {
+                this.mgrid.DataSource = null;
+            }
+        }
+    
+        private void metroTile1_Click(object sender, EventArgs e)
+        {
+            Referential.BPLS.Turn_AroundTime form = new Referential.BPLS.Turn_AroundTime(sworn_list.SelectedValue.ToString(), ctr_ss.txt_changebusinessname.Text,DateTime.Now.Year.ToString());
+            form.Show();
+        }
+        private int LatestCount() 
+        {
+            DataTable dt = new DataTable();
+            Program.da.createCommand("select count(sworn_id) as c from stamariabpls.dbo. select_sworn");
+            if (Program.da.fillCommand()) 
+            {
+                dt = Program.da.getTable();
+                DataRow dr = dt.Rows[0];
+                return int.Parse(dr["c"].ToString());
+            }
+            return current_count;
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //int new_count = LatestCount();
+            //if (current_count != new_count)
+            //{
+            //    ToneNotification.Play(Path.Combine(Environment.CurrentDirectory, @"Resources\", tone.name ));
+            //    load_list();
+            //}
+             
+        }
+        private void update_sworn_code( int sworn_code, int id)
+        {
+            Program.da.createCommand("update stamariabpls.dbo.business_sworn_statements set sworn_code=" + sworn_code + " where  id=" + id);
+            if (Program.da.executeCommand())
+            {
+
+            }
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            sworncodepromptdialog form = new sworncodepromptdialog(sworn_list.SelectedValue, this);
+            form.ShowDialog();
+            // ctr_ss.LoadLineofBusiness();
+
+        }
+
+        private void btn_upload_Click(object sender, EventArgs e)
+        {
+            ImageUploader uploader = new ImageUploader();
+            uploader.ShowDialog();
+        }
+        private void mgrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+         
+          
+             
+        }
+        private bool HASBEENASSESSED {
+            get {
+                DataTable dt = new DataTable ();
+                Program.da.createCommand ("select count(id) cnt from stamariabpls.dbo.business_assessments where sworn_id="+sworn_id+@" 
+                and year(transaction_date)="+DateTime.Now.Year.ToString()+" and tag < 2");
+                if(Program.da.fillCommand()){
+                    dt = Program.da.getTable ();
+                    return !dt.Rows [0] ["cnt"].ToString ().Equals ("0");
+                }
+                return false;
+
+            }
+        }
+
+        private void cbo_boss_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ctr_ss.rdn_new.Checked == true)
+            {
+                transaction_type = 1;
+            }
+            else if (ctr_ss.rdn_renewal.Checked == true)
+            {
+                transaction_type = 2;
+            }
+            else if (ctr_ss.rdn_closure.Checked == true)
+            {
+                transaction_type = 3;
+
+            }
+
+            if (cbo_boss.Text != "")
+            {
+                DataTable dt = new DataTable();
+                string sql = @"select id,description,'View' as is_preview,boss from stamariabpls.dbo.ref_requirements where boss='" + cbo_boss.Text + "'";
+
+
+                Program.da.createCommand(sql);
+                if (Program.da.fillCommand())
+                {
+                    dt = Program.da.getTable();
+
+                    if (dt.Rows.Count > 0)
+                    {
+
+                        this.mgrid.AutoGenerateColumns = false;
+                        this.mgrid.DataSource = dt;
+                    }
+                }
+            }
+            else
+            {
+                this.mgrid.DataSource = null;
+            }
+        }
+
+        private void metroCheckBox1_CheckedChanged (object sender , EventArgs e)
+        {
+            load_list (metroCheckBox1.Checked);
+            referentialButton1.Visible = !metroCheckBox1.Checked;
+            btn_proceed.Visible = !metroCheckBox1.Checked;
+            
+        }
+
+        private void mgrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            if (e.ColumnIndex == 3)
+            {
+                string description = mgrid.Rows[e.RowIndex].Cells["description"].Value.ToString();
+                string doc_id= mgrid.Rows[e.RowIndex].Cells["id"].Value.ToString();
+                string transaction_type = "1";//new
+                if (ctr_ss.rdn_closure.Checked) {
+                    transaction_type = "3";
+                }
+                if (ctr_ss.rdn_renewal.Checked) {
+                    transaction_type = "2";
+                }
+                DocumentsGallery g = new DocumentsGallery(description,ctr_ss.txt_businessyear.Text, sworn_list.SelectedValue, transaction_type, doc_id,ctr_ss.txt_changebusinessname.Text);
+                g.ShowDialog();
+            }
+        }
+
+        private void metroTile2_Click(object sender, EventArgs e)
+        {
+            Program.da.createCommand("update stamariabpls.dbo.windows set business_id=0 where ipaddress='"+ GetLocalIPAddress()+"'");
+            Program.da.executeCommand();
+        }
+        //private int _sworn_code//latest update
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            Program.da.createCommand("select current_code from stamariabpls.dbo.Sybase_codes where name ='sworn_code'");
+        //            if (Program.da.fillCommand())
+        //            {
+        //                DataTable dt = new DataTable();
+        //                dt = Program.da.getTable();
+        //                return int.Parse(dt.Rows[0][0].ToString());
+        //            }
+        //        } catch (Exception xx) { return 0; }
+        //        return 0;
+
+        //    }
+        //}
+        //private void UpdateSworn(int sworn_code) {
+        //    Program.da.createCommand("update stamariabpls.dbo.Sybase_codes set current_code= " + (_sworn_code+1)+" where name='sworn_code'");
+        //    if (Program.da.executeCommand()) {
+
+        //    }
+        //}
+
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("Local IP Address Not Found!");
+        }
+
+        private void sworn_list_Enter(object sender, EventArgs e)
+        {            
+        }
+        private void sworn_list_KeyDown(object sender, KeyEventArgs e)
+        {
+          
+        }
+
+        private void frm_swornstatement_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keys.F6 == e.KeyCode)
+            {
+
+              
+            }
+        }
+    }
+}
